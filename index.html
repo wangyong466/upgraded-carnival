@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>德江傩堂戏 · 傩文化数字展馆</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background: linear-gradient(145deg, #1e1a0e 0%, #2c2416 100%);
+            font-family: 'Segoe UI', 'Noto Sans CJK SC', 'PingFang SC', '华文楷书', monospace;
+            padding: 16px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .app-container {
+            max-width: 550px;
+            width: 100%;
+            background: #fef7ea;
+            border-radius: 56px 40px 56px 40px;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.5);
+            overflow: hidden;
+            border: 1px solid #e2c894;
+            position: relative;
+        }
+        .culture-bar {
+            background: #2b2118d9;
+            backdrop-filter: blur(4px);
+            margin: 12px 12px 0 12px;
+            border-radius: 40px 20px 40px 20px;
+            padding: 10px 16px;
+            color: #fff3df;
+            font-size: 0.7rem;
+            text-align: center;
+        }
+        .tabs {
+            display: flex;
+            background: #2b2118;
+            margin: 12px 12px 0;
+            border-radius: 60px;
+            overflow-x: auto;
+            gap: 4px;
+            padding: 4px;
+            flex-wrap: nowrap;
+        }
+        .tab-btn {
+            flex: 1;
+            background: #51412e;
+            border: none;
+            padding: 8px 0;
+            border-radius: 50px;
+            font-weight: bold;
+            color: #ecd89e;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .tab-btn.active {
+            background: #c9853a;
+            color: #2b1e0e;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .panel {
+            display: none;
+            padding: 12px;
+            animation: fade 0.2s ease;
+        }
+        .panel.active-panel {
+            display: block;
+        }
+        @keyframes fade {
+            from { opacity: 0; transform: translateY(5px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        .intro-card {
+            background: #fcf4e2;
+            border-radius: 32px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .intro-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #b45f2b;
+            border-left: 5px solid #c9853a;
+            padding-left: 12px;
+            margin-bottom: 12px;
+        }
+        .intro-text {
+            font-size: 0.8rem;
+            line-height: 1.5;
+            color: #3b2c1a;
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+        .intro-sub {
+            font-weight: bold;
+            color: #8c5a2a;
+            margin: 12px 0 6px;
+            font-size: 0.85rem;
+        }
+        .intro-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 8px 0;
+        }
+        .intro-item {
+            background: #e8d9c0;
+            border-radius: 20px;
+            padding: 8px;
+            font-size: 0.7rem;
+            text-align: center;
+        }
+        .badge-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 8px 0;
+        }
+        .badge {
+            background: #c9853a;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            color: #2b1e0e;
+            font-weight: bold;
+        }
+        .battle-area {
+            background: #2f2a1f;
+            border-radius: 48px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: inset 0 0 0 2px #c7a55b;
+        }
+        .monster-card {
+            background: #1e1910;
+            border-radius: 36px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid #e0b87a;
+        }
+        .monster-name {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #ff6e4a;
+        }
+        .monster-desc {
+            color: #e9d6af;
+            font-size: 0.9rem;
+            margin: 10px 0;
+            font-style: italic;
+        }
+        .question-box {
+            background: #2b2118;
+            border-radius: 28px;
+            padding: 16px;
+            margin: 16px 0 12px;
+            color: #ffdfa5;
+        }
+        .question-text {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+        .options-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        .option-btn {
+            background: #c9853a;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 60px;
+            font-weight: bold;
+            color: #2b1e0e;
+            box-shadow: 0 3px 0 #6a3c1a;
+            cursor: pointer;
+            font-size: 0.85rem;
+            flex: 1 0 auto;
+            min-width: 100px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .option-btn img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .option-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #6a3c1a;
+        }
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            background: #dac29c;
+            padding: 8px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin: 12px 0;
+        }
+        .restart-btn {
+            background: #51412e;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 60px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 6px;
+        }
+        .category-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: #c9853a;
+            display: inline-block;
+            padding: 4px 20px;
+            border-radius: 40px;
+            margin: 16px 0 6px;
+            color: #2b1e0e;
+        }
+        .category-desc {
+            background: #e8d9c0;
+            border-radius: 24px;
+            padding: 10px 16px;
+            margin-bottom: 12px;
+            font-size: 0.75rem;
+            color: #3b2c1a;
+            border-left: 5px solid #c9853a;
+            line-height: 1.4;
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 6px;
+        }
+        .god-card {
+            background: #fcf4e2;
+            border-radius: 28px;
+            padding: 12px;
+            text-align: center;
+            border-bottom: 4px solid #bc8f50;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .god-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 8px;
+        }
+        .god-icon img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #2f241a;
+        }
+        .god-name { font-weight: bold; color: #b45f2b; }
+        .god-category { font-size: 0.6rem; background: #e8d9c0; display: inline-block; padding: 2px 8px; border-radius: 20px; margin-top: 4px; }
+        .god-desc { font-size: 0.65rem; color: #6b4e2a; margin: 6px 0; }
+        .god-defeat { font-size:0.6rem; color:#8c5a2a; margin-top:4px; font-weight: bold; background:#f7ecd9; border-radius:12px; padding:2px 4px; display:inline-block; }
+        .god-knowledge { font-size:0.65rem; color:#996a3c; margin-top:4px; }
+        .quiz-card {
+            background: #fcf4e2;
+            border-radius: 32px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .quiz-question { font-weight: bold; font-size: 1rem; margin-bottom: 16px; }
+        .quiz-option { background: #efe3c9; padding: 12px; border-radius: 60px; margin: 8px 0; cursor: pointer; text-align: center; }
+        .quiz-option:active { background: #dac29c; transform: scale(0.98);}
+        .quiz-culture {
+            margin-top: 16px;
+            padding: 12px;
+            background: #e8d9c0;
+            border-radius: 28px;
+            font-size: 0.75rem;
+            color: #3b2c1a;
+            border-left: 4px solid #c9853a;
+        }
+        .quiz-score { font-weight: bold; text-align: center; margin-top: 12px; }
+        .match-stats {
+            display: flex;
+            justify-content: space-between;
+            background: #dac29c;
+            padding: 8px 14px;
+            border-radius: 40px;
+            font-weight: bold;
+            margin: 10px 0;
+            font-size: 0.8rem;
+        }
+        .match-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .match-card {
+            aspect-ratio: 1 / 1;
+            background: #2f241a;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 0 #6a3c1a;
+            transform: translateY(-2px);
+            color: #fff3df;
+            font-size: 0.8rem;
+            padding: 6px;
+            word-break: break-word;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .match-card img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .match-card.flipped, .match-card.matched {
+            background: #fcf4e2;
+            color: #2b1e0e;
+            box-shadow: 0 2px 0 #b47c44;
+            transform: translateY(2px);
+        }
+        .match-card.matched {
+            background: #8ba86b;
+            color: #1f2c12;
+            cursor: default;
+            box-shadow: none;
+            transform: none;
+            opacity: 0.7;
+        }
+        .toast {
+            position: fixed; bottom: 30%; left: 50%; transform: translateX(-50%);
+            background: #2f241bd9; backdrop-filter: blur(8px); color: #ffefb9;
+            padding: 6px 18px; border-radius: 60px; font-size: 0.8rem; z-index: 200;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(6px);
+            display: flex; align-items: center; justify-content: center; z-index: 1000;
+            visibility: hidden;
+        }
+        .modal-card { background: #fff6e8; width: 85%; border-radius: 48px; padding: 20px; text-align: center; }
+        .close-modal { background: #b4652c; border: none; padding: 6px 20px; border-radius: 40px; color: white; margin-top: 12px; cursor: pointer; }
+        footer { font-size: 0.55rem; text-align: center; background: #211a10; color: #bfa87a; padding: 8px; margin-top: 8px; }
+        .shaman-badge {
+            background: #c9853a40;
+            border-radius: 24px;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            display: inline-block;
+            margin-bottom: 6px;
+            color: #ffdfa5;
+        }
+        /* 音乐控制 */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2b2118e0;
+            backdrop-filter: blur(10px);
+            border-radius: 48px;
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 300;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 1px solid #c7a55b;
+            font-size: 0.7rem;
+        }
+        .music-btn {
+            background: #c9853a;
+            border: none;
+            border-radius: 30px;
+            padding: 4px 10px;
+            color: #2b1e0e;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .music-slider {
+            width: 70px;
+            cursor: pointer;
+        }
+        .music-status {
+            color: #ecd89e;
+            font-size: 0.65rem;
+        }
+        .click-tip {
+            background: #c9853a;
+            color: #2b1e0e;
+            padding: 4px 8px;
+            border-radius: 40px;
+            font-size: 0.6rem;
+            font-weight: bold;
+            animation: pulse 1.2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.6; transform: scale(0.98);}
+            100% { opacity: 1; transform: scale(1);}
+        }
+        @media (max-width: 500px) {
+            .music-player { padding: 4px 8px; gap: 5px; }
+            .music-slider { width: 55px; }
+            .music-status { display: none; }
+            .click-tip { font-size: 0.55rem; }
+            .option-btn img { width: 20px; height: 20px; }
+            .match-card img { width: 30px; height: 30px; }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <div class="culture-bar">
+        🧙 德江傩堂戏 · 中国戏剧活化石 | 国家级非遗 🎭
+    </div>
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="intro">🎭 傩戏介绍</button>
+        <button class="tab-btn" data-tab="gallery">📖 傩神录(16尊)</button>
+        <button class="tab-btn" data-tab="ritual">⚔️ 驱邪闯关</button>
+        <button class="tab-btn" data-tab="quiz">📜 学识试炼</button>
+        <button class="tab-btn" data-tab="match">🎴 傩艺消消乐</button>
+    </div>
+    
+    <div class="panel active-panel" id="introPanel">
+        <div class="intro-card">
+            <div class="intro-title">📜 德江傩堂戏 · 文化渊源</div>
+            <div class="intro-text">德江傩堂戏源于商周时期的“方相氏驱傩”，距今已有数千年历史，被誉为“中国戏剧活化石”。2006年列入首批国家级非物质文化遗产名录，德江县被命名为“中国民间文化艺术之乡”。</div>
+            <div class="intro-sub">🏮 四大表演类型</div>
+            <div class="intro-grid">
+                <div class="intro-item"><strong>冲傩</strong><br>消灾驱邪</div>
+                <div class="intro-item"><strong>过关</strong><br>孩童成人礼</div>
+                <div class="intro-item"><strong>庆寿</strong><br>还寿愿祈福</div>
+                <div class="intro-item"><strong>财福傩</strong><br>祈求五谷丰登</div>
+            </div>
+            <div class="intro-sub">🎭 三大表演阶段</div>
+            <div class="badge-list"><span class="badge">开坛·请神</span><span class="badge">开洞·出戏</span><span class="badge">闭坛·送神</span></div>
+            <div class="intro-text">贯穿傩仪始终，仪式与戏剧交融，庄严而神秘。</div>
+            <div class="intro-sub">👺 四类面具 · 56类角色 160余种艺术形态</div>
+            <div class="badge-list"><span class="badge">威武凶猛</span><span class="badge">端庄秀丽</span><span class="badge">慈善祥和</span><span class="badge">丑陋诙谐</span></div>
+            <div class="intro-sub">📖 正戏与插戏</div>
+            <div class="intro-text">全堂戏24出、半堂戏12出，以及《安安送米》等30余出插戏剧目，融汇傩技绝活：开红山、上刀山、下油锅、口含红铁。</div>
+        </div>
+    </div>
+    
+    <div class="panel" id="galleryPanel">
+        <div id="galleryContainer"></div>
+        <footer>点击傩神卡片，查看故事与克制邪祟</footer>
+    </div>
+    
+    <div class="panel" id="ritualPanel">
+        <div class="battle-area" id="battleArea"></div>
+        <div class="progress-info">
+            <span>🗡️ 第 <span id="currentStage">1</span> / <span id="totalStage">6</span> 关</span>
+            <span>🏆 斩妖数: <span id="victoryCount">0</span></span>
+        </div>
+        <button class="restart-btn" id="restartRitualBtn">🔄 重开降妖之路</button>
+    </div>
+    
+    <div class="panel" id="quizPanel">
+        <div class="quiz-card" id="quizCard">
+            <div class="quiz-question" id="quizQuestion">加载中...</div>
+            <div id="quizOptions"></div>
+            <div class="quiz-culture" id="quizCulture" style="display:none;"></div>
+            <div class="quiz-score" id="quizScore">得分: 0 / 5</div>
+        </div>
+        <button class="restart-btn" id="resetQuizBtn">🔄 重开试炼</button>
+    </div>
+    
+    <div class="panel" id="matchPanel">
+        <div class="match-stats">
+            <span>🎴 配对进度: <span id="matchedCount">0</span> / <span id="totalPairs">0</span></span>
+            <span>✨ 尝试次数: <span id="attemptCount">0</span></span>
+        </div>
+        <div class="match-grid" id="matchGrid"></div>
+        <button class="restart-btn" id="resetMatchBtn">🔄 洗牌重开</button>
+        <div class="match-message" id="matchMessage">配对傩神与法器，感受傩艺灵韵</div>
+    </div>
+    
+    <footer>德江傩文化数字传承 · 心正召神，法器降妖</footer>
+</div>
+
+<!-- 音乐控件 (OGG格式) -->
+<div class="music-player" id="musicPlayer">
+    <span class="music-status" id="musicStatus">🔇</span>
+    <button class="music-btn" id="playPauseBtn">▶️</button>
+    <input type="range" id="volumeSlider" class="music-slider" min="0" max="100" value="25">
+    <span class="click-tip" id="musicClickTip">✨点我奏傩乐✨</span>
+</div>
+
+<div class="modal" id="godModal">
+    <div class="modal-card">
+        <h3 id="modalTitle">傩神故事</h3>
+        <p id="modalDetail"></p>
+        <button class="close-modal" id="closeGodModal">关闭</button>
+    </div>
+</div>
+
+<script>
+(function(){
+    // ---------- 16位傩神数据 (图片使用 images/id.png) ----------
+    const GODS = [
+        { id:0, category:"正神", name:"东山圣公", weapon:"总神令旗", desc:"始祖傩神，统摄万灵", story:"与南山圣母并尊，为傩祭最高神灵，掌管天地阴阳。", feature:"帝王装扮，威严端庄，手持总神令旗，号令诸神。", defeat:["五方厉鬼","上古年兽"] },
+        { id:1, category:"正神", name:"开山莽将", weapon:"开山斧", desc:"威猛开路，斩妖除祟", story:"德江傩坛首席猛将，上刀山仪式中第一个请的神灵。", feature:"面色赤黑，浓眉大眼，手持巨斧。", defeat:["山魈毒瘴","蛛魔","毒菇妖"] },
+        { id:2, category:"正神", name:"尖角将军", weapon:"尖角枪", desc:"开洞请神，破山开路", story:"头长独角，用于开洞请出二十四戏。", feature:"独角锋锐，破山开路。", defeat:["山精","岩怪"] },
+        { id:3, category:"正神", name:"开路将军", weapon:"开山钺", desc:"逢山开路，遇水搭桥", story:"类似方相氏，逢山开路，遇水搭桥，驱赶拦路邪祟。", feature:"怒目圆睁，手持开山钺。", defeat:["拦路鬼","山魈"] },
+        { id:4, category:"正神", name:"关圣帝君", weapon:"青龙偃月刀", desc:"忠义仁勇，护国佑民", story:"武圣化身，忠义正气镇压邪魅。", feature:"面如重枣，长髯飘飘，手持青龙偃月刀。", defeat:["邪法师","刀兵鬼"] },
+        { id:5, category:"正神", name:"杨泗将军", weapon:"斩蛟剑", desc:"斩蛟除害，镇守江河", story:"水神信仰，斩蛟龙，护佑水上平安。", feature:"金面红须，手持斩蛟剑。", defeat:["水妖","河煞"] },
+        { id:6, category:"正神", name:"灵官", weapon:"五雷火扇", desc:"雷火降魔，镇守坛场", story:"道教护法神，赤红面具，能驱雷火焚烧疫鬼。", feature:"红面红须，三目怒睁，手持五雷火扇。", defeat:["瘟鬼火煞","火鬼","雷劫鬼"] },
+        { id:7, category:"凶神", name:"判官", weapon:"判官笔", desc:"铁面无私，录善罚恶", story:"勾簿判官，铁面无私，勾还良愿，破除白骨妖邪。", feature:"黑面长须，头戴软翅帽，手持判官笔。", defeat:["白骨精煞","恶鬼","坟地煞"] },
+        { id:8, category:"世俗神", name:"南山圣母", weapon:"甘露瓶", desc:"母仪人间，赐子添福", story:"端庄秀丽类面具，掌管生育与家庭和睦。", feature:"慈眉善目，手持甘露瓶。", defeat:["迷魂妖","蛊毒"] },
+        { id:9, category:"世俗神", name:"唐氏太婆", weapon:"钥匙串", desc:"掌管桃源三洞，请出二十四戏", story:"打开洞门请出二十四戏，慈祥老母形象。", feature:"白发老妪，手持钥匙串。", defeat:["夜啼鬼婴","水鬼","失魂童"] },
+        { id:10, category:"世俗神", name:"先锋小姐", weapon:"令旗", desc:"勾愿先锋，酬神了愿", story:"负责酬神勾愿的年轻女性角色。", feature:"端庄秀丽，手持令旗。", defeat:["迷惑妖","桃花煞"] },
+        { id:11, category:"世俗神", name:"幺儿媳妇", weapon:"剪刀", desc:"正戏配角，民间妇女", story:"与开山莽将配戏的女性角色，泼辣诙谐。", feature:"民间妇女装扮。", defeat:["绣花鬼","女妖"] },
+        { id:12, category:"世俗神", name:"土地公", weapon:"拐杖", desc:"乡土守护，消灾解难", story:"引兵土地，为主家纳吉驱邪。", feature:"白须老翁，手持拐杖。", defeat:["鼠妖","田鼠精","家宅煞"] },
+        { id:13, category:"世俗神", name:"笑和尚", weapon:"布袋", desc:"笑口常开，迎祥纳福", story:"大肚弥勒相，笑容满面，收尽人间灾厄。", feature:"大肚弥勒，手持布袋。", defeat:["破财鬼","穷鬼"] },
+        { id:14, category:"世俗神", name:"鞠躬老师", weapon:"锤子", desc:"为傩神修整法器", story:"铁匠角色，在正戏中为开山莽将修整开山斧。", feature:"工匠打扮，手持锤子。", defeat:["铁匠鬼","造器煞"] },
+        { id:15, category:"丑角神", name:"秦童", weapon:"扁担", desc:"诙谐挑担，丑角戏谑", story:"歪嘴斜眼，肩挑扁担，以丑态驱散邪气。", feature:"歪嘴斜眼，滑稽可笑。", defeat:["黄鼠狼精","狐妖"] }
+    ];
+    
+    // 为每个神指定真实图片路径（images/id.png）
+    for(let i=0;i<GODS.length;i++){
+        GODS[i].icon = "images/" + GODS[i].id + ".png";
+    }
+    
+    // 怪物池（克制关系已调整）
+    const MONSTER_POOL = [
+        { name:"🐍 山魈毒瘴", feature:"林间邪气所化，浑身毒雾。", correctGodId:1 },
+        { name:"🔥 瘟鬼火煞", feature:"疫火缠身，焚烧村寨。", correctGodId:6 },
+        { name:"👻 夜啼鬼婴", feature:"半夜啼哭，使人失魂。", correctGodId:9 },
+        { name:"💀 白骨精煞", feature:"尸气白骨，刀枪难入。", correctGodId:7 },
+        { name:"🌪️ 五方厉鬼", feature:"东南西北中五方恶鬼齐至。", correctGodId:0 },
+        { name:"🔮 邪法师", feature:"堕落的巫师，操控傀儡。", correctGodId:4 },
+        { name:"🐉 上古年兽", feature:"铜头铁额，吞食生灵。", correctGodId:0 },
+        { name:"🕷️ 蛛魔", feature:"千年蜘蛛精，吐丝结网。", correctGodId:1 },
+        { name:"🌑 黑煞", feature:"黑夜煞气，噩梦缠身。", correctGodId:7 },
+        { name:"💧 水鬼", feature:"溺亡怨魂，拖人下水。", correctGodId:9 },
+        { name:"🍂 黄鼠狼精", feature:"狡猾妖邪，迷惑人心。", correctGodId:15 },
+        { name:"🐀 鼠妖", feature:"啃食粮谷，散播瘟疫。", correctGodId:12 },
+        { name:"🌫️ 迷魂妖", feature:"制造幻境，迷惑心智。", correctGodId:8 },
+        { name:"⚡ 雷劫鬼", feature:"引天雷害人，破坏坛场。", correctGodId:6 },
+        { name:"🪦 坟地煞", feature:"墓地阴煞，侵扰活人。", correctGodId:7 },
+        { name:"🍄 毒菇妖", feature:"生毒瘴，使人癫狂。", correctGodId:1 },
+        { name:"👶 失魂童", feature:"勾走孩童魂魄。", correctGodId:9 },
+        { name:"🗡️ 刀兵鬼", feature:"战场亡魂，主血光之灾。", correctGodId:4 },
+        { name:"🧺 破财鬼", feature:"耗散家财，诸事不顺。", correctGodId:13 },
+        { name:"🏠 家宅煞", feature:"家宅不宁，诸事不顺。", correctGodId:12 }
+    ];
+    const ROUNDS_PER_RUN = 6;
+    
+    // ---------- 音乐模块 (OGG格式) ----------
+    const DEFAULT_MUSIC_URL = "bgm.ogg";   // 使用ogg格式音乐文件
+    let audioElement = null, musicAllowed = false, musicActive = false;
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const volumeSlider = document.getElementById('volumeSlider');
+    const musicStatusSpan = document.getElementById('musicStatus');
+    const musicClickTip = document.getElementById('musicClickTip');
+    
+    function initAudio() {
+        if (!audioElement) {
+            audioElement = new Audio();
+            audioElement.loop = true;
+            audioElement.volume = volumeSlider.value / 100;
+            audioElement.addEventListener('play', () => {
+                playPauseBtn.innerHTML = '⏸️';
+                musicStatusSpan.innerHTML = '🎵';
+                if (musicClickTip) musicClickTip.style.display = 'none';
+            });
+            audioElement.addEventListener('pause', () => {
+                playPauseBtn.innerHTML = '▶️';
+                musicStatusSpan.innerHTML = '🔇';
+            });
+            audioElement.addEventListener('error', () => {
+                musicStatusSpan.innerHTML = '⚠️';
+            });
+        }
+    }
+    
+    function startCustomMusic() {
+        if (!musicAllowed) return;
+        if (musicActive) return;
+        initAudio();
+        if (audioElement.src !== DEFAULT_MUSIC_URL) {
+            audioElement.src = DEFAULT_MUSIC_URL;
+            audioElement.load();
+        }
+        audioElement.play().then(() => {
+            musicActive = true;
+        }).catch(() => {
+            musicStatusSpan.innerHTML = '⚠️';
+        });
+    }
+    
+    let globalClickHandler = null;
+    function enableMusicOnFirstClick() {
+        if (globalClickHandler) return;
+        globalClickHandler = function(e) {
+            if (!musicAllowed) {
+                musicAllowed = true;
+                startCustomMusic();
+                document.removeEventListener('click', globalClickHandler);
+                globalClickHandler = null;
+            }
+        };
+        document.addEventListener('click', globalClickHandler);
+        if (musicClickTip) {
+            musicClickTip.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!musicAllowed) {
+                    musicAllowed = true;
+                    startCustomMusic();
+                    if (globalClickHandler) document.removeEventListener('click', globalClickHandler);
+                    globalClickHandler = null;
+                }
+            });
+        }
+    }
+    
+    playPauseBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!musicAllowed) {
+            musicAllowed = true;
+            startCustomMusic();
+        } else {
+            if (audioElement && audioElement.src) {
+                if (audioElement.paused) audioElement.play();
+                else audioElement.pause();
+            } else {
+                startCustomMusic();
+            }
+        }
+    });
+    
+    volumeSlider.addEventListener('input', (e) => {
+        if (audioElement) audioElement.volume = e.target.value / 100;
+    });
+    
+    enableMusicOnFirstClick();
+    
+    // 辅助函数
+    function showToast(msg, dur = 1800) {
+        let old = document.querySelector('.toast');
+        if (old) old.remove();
+        let div = document.createElement('div');
+        div.className = 'toast';
+        div.innerText = msg;
+        document.body.appendChild(div);
+        setTimeout(() => div.remove(), dur);
+    }
+    
+    // ---------- 闯关逻辑 ----------
+    let currentRunMonsters = [], currentMonsterIndex = 0, victories = 0, gameActive = true, currentMonsterData = null, currentGod = null;
+    function randomSelectMonsters(cnt) { let shuffled = [...MONSTER_POOL]; for (let i = shuffled.length - 1; i > 0; i--) { let j = Math.floor(Math.random() * (i + 1)); [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; } return shuffled.slice(0, cnt); }
+    function getRandomGodsExcept(excludeId, cnt = 2) { let others = GODS.filter(g => g.id !== excludeId); let shuffled = [...others]; for (let i = shuffled.length - 1; i > 0; i--) { let j = Math.floor(Math.random() * (i + 1)); [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; } return shuffled.slice(0, cnt); }
+    function getRandomWeaponsExcept(correctWeapon, correctGodId, cnt = 2) { let otherWeapons = GODS.filter(g => g.id !== correctGodId).map(g => g.weapon); let unique = [...new Set(otherWeapons)]; let filtered = unique.filter(w => w !== correctWeapon); let shuffled = [...filtered]; for (let i = shuffled.length - 1; i > 0; i--) { let j = Math.floor(Math.random() * (i + 1)); [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; } return shuffled.slice(0, cnt); }
+    function showGodQuestion() { if (!gameActive || currentMonsterIndex >= currentRunMonsters.length) return; let monster = currentRunMonsters[currentMonsterIndex]; currentMonsterData = monster; let correctGod = GODS.find(g => g.id === monster.correctGodId); currentGod = correctGod; let wrongGods = getRandomGodsExcept(correctGod.id, 2); let options = [correctGod, ...wrongGods]; for (let i = options.length - 1; i > 0; i--) { let j = Math.floor(Math.random() * (i + 1)); [options[i], options[j]] = [options[j], options[i]]; } let html = `<div class="monster-card"><div class="shaman-badge">🧙 傩师召神</div><div class="monster-name">${monster.name}</div><div class="monster-desc">「${monster.feature}」</div><div class="question-box"><div class="question-text">📿 哪一位傩神能克制此邪祟？</div><div class="options-area" id="godOptions">${options.map(opt => `<button class="option-btn" data-god-id="${opt.id}"><img src="${opt.icon}" alt=""> ${opt.name}</button>`).join('')}</div></div></div>`; battleArea.innerHTML = html; document.querySelectorAll('#godOptions .option-btn').forEach(btn => { btn.onclick = () => { if (!gameActive) return; if (parseInt(btn.dataset.godId) === correctGod.id) showWeaponQuestion(); else { gameActive = false; battleArea.innerHTML = `<div class="monster-card"><div class="monster-name">💀 傩师陨落</div><div class="monster-desc">召神错误，邪祟反噬。点击重开。</div></div>`; showToast("召神有误，闯关失败", 2000); } }; }); }
+    function showWeaponQuestion() { if (!gameActive) return; let monster = currentMonsterData; let correctGod = currentGod; let correctWeapon = correctGod.weapon; let wrongWeapons = getRandomWeaponsExcept(correctWeapon, correctGod.id, 2); let options = [correctWeapon, ...wrongWeapons]; for (let i = options.length - 1; i > 0; i--) { let j = Math.floor(Math.random() * (i + 1)); [options[i], options[j]] = [options[j], options[i]]; } let html = `<div class="monster-card"><div class="shaman-badge">⚡ 傩神显圣</div><div class="monster-name">${monster.name}</div><div class="monster-desc">「${monster.feature}」</div><div class="question-box"><div class="question-text">⚔️ ${correctGod.name} 应当使用哪件法器？</div><div class="options-area" id="weaponOptions">${options.map(opt => `<button class="option-btn" data-weapon="${opt}">${opt}</button>`).join('')}</div></div></div>`; battleArea.innerHTML = html; document.querySelectorAll('#weaponOptions .option-btn').forEach(btn => { btn.onclick = () => { if (!gameActive) return; if (btn.dataset.weapon === correctWeapon) { victories++; currentMonsterIndex++; victoryCountSpan.innerText = victories; showToast(`✅ ${correctGod.name} 以 ${correctWeapon} 降服 ${monster.name}`, 1600); if (currentMonsterIndex >= currentRunMonsters.length) { gameActive = true; battleArea.innerHTML = `<div class="monster-card" style="background:#2b5a2e;"><div class="monster-name">✨ 傩师封圣 ✨</div><div class="monster-desc">功德圆满！</div></div>`; currentStageSpan.innerText = currentRunMonsters.length; totalStageSpan.innerText = currentRunMonsters.length; return; } updateProgressDisplay(); showGodQuestion(); } else { gameActive = false; battleArea.innerHTML = `<div class="monster-card"><div class="monster-name">💀 傩师失手</div><div class="monster-desc">法器错误，邪祟逃脱。</div></div>`; showToast("法器错误，闯关失败", 2000); } }; }); }
+    function updateProgressDisplay() { currentStageSpan.innerText = currentMonsterIndex + 1; totalStageSpan.innerText = currentRunMonsters.length; victoryCountSpan.innerText = victories; }
+    function resetRitual() { gameActive = true; currentRunMonsters = randomSelectMonsters(ROUNDS_PER_RUN); currentMonsterIndex = 0; victories = 0; updateProgressDisplay(); showGodQuestion(); showToast("傩师再行天道，召神伏魔", 1200); }
+    const battleArea = document.getElementById('battleArea'), currentStageSpan = document.getElementById('currentStage'), totalStageSpan = document.getElementById('totalStage'), victoryCountSpan = document.getElementById('victoryCount'), restartRitualBtn = document.getElementById('restartRitualBtn');
+    restartRitualBtn.onclick = resetRitual;
+    
+    // 傩神录渲染
+    const galleryContainer = document.getElementById('galleryContainer');
+    const CATEGORY_INTROS = { "正神": "威猛护法，斩杀邪祟", "凶神": "以凶制凶，收服厉鬼", "世俗神": "慈祥赐福，护佑安康", "丑角神": "诙谐驱邪，调节气氛" };
+    function buildGallery() {
+        const categories = ["正神", "凶神", "世俗神", "丑角神"];
+        galleryContainer.innerHTML = '';
+        categories.forEach(cat => {
+            let catDiv = document.createElement('div');
+            let titleDiv = document.createElement('div'); titleDiv.className = 'category-title'; titleDiv.innerText = cat; catDiv.appendChild(titleDiv);
+            let introDiv = document.createElement('div'); introDiv.className = 'category-desc'; introDiv.innerText = CATEGORY_INTROS[cat]; catDiv.appendChild(introDiv);
+            let grid = document.createElement('div'); grid.className = 'gallery-grid';
+            let godsInCat = GODS.filter(g => g.category === cat);
+            godsInCat.forEach(god => {
+                let card = document.createElement('div'); card.className = 'god-card';
+                let defeatStr = god.defeat.join('、');
+                card.innerHTML = `<div class="god-icon"><img src="${god.icon}" alt="${god.name}"></div><div class="god-name">${god.name}</div><div class="god-category">${god.category}</div><div class="god-desc">${god.desc}</div><div class="god-defeat">🎯 克制：${defeatStr}</div><div class="god-knowledge">📖 点击详情</div>`;
+                card.onclick = () => { modalTitle.innerText = `${god.name} · ${god.weapon}`; modalDetail.innerText = `${god.story}\n法器：${god.weapon}\n特征：${god.feature}\n专克邪祟：${defeatStr}`; godModal.style.visibility = 'visible'; };
+                grid.appendChild(card);
+            });
+            catDiv.appendChild(grid); galleryContainer.appendChild(catDiv);
+        });
+    }
+    
+    // 学识试炼
+    let quizTimer = null, quizState = { score: 0, currentIndex: 0, answered: false };
+    const QUIZ = [
+        { q: "傩戏起源于哪个朝代？", options: ["商周", "秦汉", "唐宋", "明清"], correct: 0, culture: "傩戏源于商周方相氏驱傩仪式，距今超3000年。" },
+        { q: "德江傩堂戏哪一年列入国家级非遗？", options: ["2006年", "2008年", "2010年", "2001年"], correct: 0, culture: "2006年列入首批国家级非遗。" },
+        { q: "“上刀山”主要为什么？", options: ["表演杂技", "为孩童过关煞", "庆祝丰收", "求雨"], correct: 1, culture: "上刀山为过关煞，祈求孩童平安长大。" },
+        { q: "德江傩面具不包含哪一类？", options: ["威武凶猛", "端庄秀丽", "慈祥和蔼", "华丽宫廷"], correct: 3, culture: "分为四类，无华丽宫廷类。" },
+        { q: "掌坛法师的核心职责？", options: ["敲锣打鼓", "主持仪式、精通傩技", "雕刻面具", "扮演小鬼"], correct: 1, culture: "掌坛法师是傩坛核心。" }
+    ];
+    const quizQuestionDiv = document.getElementById('quizQuestion'), quizOptionsDiv = document.getElementById('quizOptions'), quizCultureDiv = document.getElementById('quizCulture'), quizScoreSpan = document.getElementById('quizScore'), resetQuizBtn = document.getElementById('resetQuizBtn');
+    function loadQuizQuestion() { if (quizTimer) clearTimeout(quizTimer); if (quizState.currentIndex >= QUIZ.length) { quizQuestionDiv.innerText = "🎉 试炼圆满"; quizOptionsDiv.innerHTML = `<div style="text-align:center;">得分: ${quizState.score}/${QUIZ.length}</div>`; quizCultureDiv.style.display = 'none'; return; } let q = QUIZ[quizState.currentIndex]; quizQuestionDiv.innerText = q.q; quizOptionsDiv.innerHTML = q.options.map((opt, idx) => `<div class="quiz-option" data-optidx="${idx}">${opt}</div>`).join(''); quizCultureDiv.style.display = 'none'; document.querySelectorAll('.quiz-option').forEach(optDiv => { optDiv.onclick = () => { if (quizState.answered) return; let selected = parseInt(optDiv.dataset.optidx); quizState.answered = true; if (selected === q.correct) { quizState.score++; showToast("✓正确", 1000); } else showToast(`✗错误，正确答案：${q.options[q.correct]}`, 1500); quizScoreSpan.innerText = `得分: ${quizState.score} / ${QUIZ.length}`; quizCultureDiv.style.display = 'block'; quizCultureDiv.innerHTML = `<strong>📜 文化知识：</strong><br>${q.culture}`; quizTimer = setTimeout(() => { quizState.currentIndex++; quizState.answered = false; loadQuizQuestion(); quizTimer = null; }, 2000); }; }); }
+    function resetQuiz() { if (quizTimer) clearTimeout(quizTimer); quizState = { score: 0, currentIndex: 0, answered: false }; quizScoreSpan.innerText = `得分: 0 / ${QUIZ.length}`; loadQuizQuestion(); }
+    resetQuizBtn.onclick = resetQuiz;
+    
+    // 消消乐
+    let matchCards = [], matchFlipped = [], matchLock = false, matchAttempts = 0, matchedPairs = 0, totalPairs = 0, pendingTimeout = null;
+    const matchGrid = document.getElementById('matchGrid'), matchedCountSpan = document.getElementById('matchedCount'), totalPairsSpan = document.getElementById('totalPairs'), attemptCountSpan = document.getElementById('attemptCount'), resetMatchBtn = document.getElementById('resetMatchBtn'), matchMessageDiv = document.getElementById('matchMessage');
+    function initMatchPairs() { let used = GODS.slice(0, 8); let pairs = []; used.forEach(g => { pairs.push({ pairId: g.id, type: 'god', content: g.name, iconUrl: g.icon }); pairs.push({ pairId: g.id, type: 'weapon', content: g.weapon, iconUrl: null }); }); totalPairs = pairs.length / 2; return pairs; }
+    function shuffleArray(arr) { for (let i = arr.length - 1; i > 0; i--) { let j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
+    function renderMatchGrid() { matchGrid.innerHTML = ''; matchCards.forEach((card, idx) => { let div = document.createElement('div'); div.className = 'match-card'; if (card.matched) div.classList.add('matched'); else if (card.flipped) div.classList.add('flipped'); if (card.flipped || card.matched) { if (card.iconUrl) { div.innerHTML = `<img src="${card.iconUrl}" alt=""><div>${card.content}</div>`; } else { div.innerHTML = card.content; } } else { div.innerHTML = '🎭'; } div.onclick = () => onCardClick(idx); matchGrid.appendChild(div); }); }
+    function resetMatchGame() { if (pendingTimeout) clearTimeout(pendingTimeout); matchLock = false; let pairs = initMatchPairs(); let raw = pairs.map((p, idx) => ({ id: idx, pairId: p.pairId, content: p.content, iconUrl: p.iconUrl, matched: false, flipped: false })); matchCards = shuffleArray(raw); matchFlipped = []; matchAttempts = 0; matchedPairs = 0; attemptCountSpan.innerText = matchAttempts; matchedCountSpan.innerText = matchedPairs; totalPairsSpan.innerText = totalPairs; matchMessageDiv.innerHTML = '✨ 配对傩神与法器 ✨'; renderMatchGrid(); }
+    function checkMatch(idxA, idxB) { let a = matchCards[idxA], b = matchCards[idxB]; if (a.pairId === b.pairId && a.id !== b.id) { a.matched = b.matched = true; a.flipped = b.flipped = false; matchedPairs++; matchedCountSpan.innerText = matchedPairs; matchMessageDiv.innerHTML = `✓ 成功！${a.content} ↔ ${b.content}`; renderMatchGrid(); matchFlipped = []; if (pendingTimeout) clearTimeout(pendingTimeout); matchLock = false; if (matchedPairs === totalPairs) { matchMessageDiv.innerHTML = '🏆 傩艺大成！通关！'; showToast("恭喜通关！", 1500); } return true; } else { matchMessageDiv.innerHTML = `❌ 配对失败，再试一次`; if (pendingTimeout) clearTimeout(pendingTimeout); pendingTimeout = setTimeout(() => { a.flipped = false; b.flipped = false; renderMatchGrid(); matchFlipped = []; matchLock = false; pendingTimeout = null; }, 700); return false; } }
+    function onCardClick(idx) { if (matchLock) return; let card = matchCards[idx]; if (card.matched) return; if (matchFlipped.length === 2) return; if (card.flipped) return; card.flipped = true; renderMatchGrid(); matchFlipped.push(idx); if (matchFlipped.length === 2) { matchAttempts++; attemptCountSpan.innerText = matchAttempts; matchLock = true; checkMatch(matchFlipped[0], matchFlipped[1]); } }
+    resetMatchBtn.onclick = resetMatchGame;
+    
+    // 选项卡切换
+    const tabs = document.querySelectorAll('.tab-btn'), panels = document.querySelectorAll('.panel');
+    tabs.forEach(btn => { btn.onclick = () => { let tabId = btn.dataset.tab; panels.forEach(p => p.classList.remove('active-panel')); tabs.forEach(b => b.classList.remove('active')); btn.classList.add('active'); if (tabId === 'intro') document.getElementById('introPanel').classList.add('active-panel'); else if (tabId === 'gallery') document.getElementById('galleryPanel').classList.add('active-panel'); else if (tabId === 'ritual') document.getElementById('ritualPanel').classList.add('active-panel'); else if (tabId === 'quiz') document.getElementById('quizPanel').classList.add('active-panel'); else if (tabId === 'match') { document.getElementById('matchPanel').classList.add('active-panel'); if (matchCards.length === 0) resetMatchGame(); } }; });
+    
+    const godModal = document.getElementById('godModal'), modalTitle = document.getElementById('modalTitle'), modalDetail = document.getElementById('modalDetail'), closeGodModal = document.getElementById('closeGodModal');
+    closeGodModal.onclick = () => godModal.style.visibility = 'hidden'; godModal.onclick = (e) => { if (e.target === godModal) godModal.style.visibility = 'hidden'; };
+    
+    buildGallery(); resetRitual(); resetQuiz(); resetMatchGame();
+})();
+</script>
+</body>
+</html>
